@@ -1,6 +1,6 @@
-# Google Maps Bot
+# Info Getter - Google Maps Lead Finder
 
-A high-performance bot to find Google Maps establishments that don't have websites, extracting their contact information (phone numbers, emails) and saving to JSON.
+A high-performance bot to find restaurants, bars, pubs, and related establishments on Google Maps that **don't have websites**, extracting their contact information (phone numbers, emails) and saving to JSON in real-time.
 
 ## ⚠️ Disclaimer
 
@@ -8,15 +8,21 @@ This tool is for **educational purposes only**. Web scraping Google Maps may vio
 
 ## Features
 
-- 🚀 **Fast** - Concurrent page processing with configurable parallelism
-- 🎯 **Targeted** - Only extracts establishments without websites
-- 📞 **Contact Info** - Extracts phone numbers and emails
-- 💾 **Persistent** - Saves results to JSON with deduplication
+- 🚀 **Fast** - Processes 10 places at a time by default
+- �️ **Food & Drink Focused** - Searches restaurants, bars, pubs, cafes, and 20+ related categories
+- 📍 **Auto-Subdivision** - Automatically splits wide areas into sub-regions for more results
+- 📞 **Contact Info** - Extracts phone numbers and searches for emails via DuckDuckGo
+- 💾 **Real-time Saves** - Results saved to JSON instantly as they're found
+- 🔄 **Deduplication** - Skips already-checked businesses and filters inactive/closed places
 - 🖥️ **CLI** - Easy-to-use command-line interface
 
 ## Installation
 
 ```bash
+# Clone the repository
+git clone <your-repo-url>
+cd info-getter
+
 # Install dependencies
 npm install
 
@@ -27,19 +33,19 @@ npx playwright install chromium
 ## Usage
 
 ```bash
-# Search ALL establishments in an area (no -q flag)
+# Basic search (food & drink establishments without websites)
 node src/cli.js -l "Madrid, Spain"
 
-# Search specific type
-node src/cli.js -q "restaurants" -l "Madrid, Spain"
+# MASSIVE search with auto-subdivision (~340 searches across categories & areas)
+node src/cli.js -l "Madrid, Spain" -s
 
-# With custom output file
-node src/cli.js -q "dentists" -l "Barcelona, Spain" -o dentists.json
+# Custom output file
+node src/cli.js -l "Barcelona, Spain" -s -o barcelona_leads.json
 
-# Higher concurrency (faster but more resource-intensive)
-node src/cli.js -l "New York, USA" -c 5
+# Adjust concurrency (default: 10)
+node src/cli.js -l "London, UK" -s -c 5
 
-# Debug mode (show browser)
+# Debug mode (show browser window)
 node src/cli.js -l "Paris, France" --no-headless
 ```
 
@@ -47,27 +53,37 @@ node src/cli.js -l "Paris, France" --no-headless
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `-q, --query <type>` | Type of establishment (omit for ALL) | All types |
-| `-l, --location <area>` | Geographic area to search | Required |
+| `-l, --location <area>` | Geographic area to search | **Required** |
+| `-s, --subdivide` | Auto-split into sub-regions for more results | `false` |
 | `-o, --output <file>` | Output JSON filename | `results.json` |
-| `-c, --concurrency <n>` | Parallel page loads | `3` |
+| `-c, --concurrency <n>` | Parallel page loads | `10` |
+| `-q, --query <type>` | Custom search type (overrides food/drink) | Food & drink |
 | `--no-headless` | Show browser window | `false` |
+
+## What It Searches
+
+When using `-s` (subdivide), the bot searches these categories across multiple sub-regions:
+
+**Categories (21):** restaurants, bars, pubs, cafes, coffee shops, bistros, taverns, diners, eateries, tapas bars, wine bars, cocktail bars, breweries, food trucks, pizzerias, fast food, takeaway, bakeries, ice cream shops, juice bars
+
+**Sub-regions:** North/South/East/West/Central + downtown, old town, city center, business district, suburbs, and more
 
 ## Output Format
 
 ```json
 {
-  "scrapedAt": "2026-01-04T22:50:00Z",
-  "query": "",
+  "scrapedAt": "2026-01-11T19:50:00Z",
+  "query": "food & drink",
   "location": "Madrid, Spain",
-  "totalFound": 15,
+  "totalFound": 150,
   "results": [
     {
       "name": "Bar El Rincón",
       "address": "Calle Mayor 15, Madrid",
       "phone": "+34 912 345 678",
-      "emails": [],
+      "emails": ["elrincon@gmail.com"],
       "hasWebsite": false,
+      "isActive": true,
       "placeId": "ChIJ..."
     }
   ]
@@ -76,7 +92,8 @@ node src/cli.js -l "Paris, France" --no-headless
 
 ## Tips
 
-- Default concurrency is 3 for lighter resource usage
-- Omit `-q` to search ALL establishment types in an area
-- Use specific queries for more targeted results (e.g., "italian restaurants")
-- Results are automatically deduplicated when running multiple times with the same output file
+- Use `-s` for comprehensive searches — finds 10-30x more results
+- Results save instantly — if the bot crashes, you keep what you found
+- Duplicate names are automatically skipped
+- Closed/inactive businesses are filtered out
+- Emails are searched via DuckDuckGo when not found on Maps
