@@ -1,0 +1,25 @@
+{
+  "name": "google-maps-bot",
+  "version": "1.0.0",
+  "description": "High-performance bot to find Google Maps establishments without websites",
+  "main": "src/cli.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/cli.js",
+    "test": "node src/cli.js -q \"cafes\" -l \"London, UK\" -o test_output.json"
+  },
+  "keywords": [
+    "google-maps",
+    "scraper",
+    "leads",
+    "bot"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "ora": "^8.0.1",
+    "playwright": "^1.41.0"
+  }
+}

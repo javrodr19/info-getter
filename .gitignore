@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Output files
+*.json
+!package.json
+!package-lock.json
+
+# Playwright
+.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
