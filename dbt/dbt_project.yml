@@ -1,0 +1,23 @@
+name: 'google_maps_leads'
+version: '1.0.0'
+config-version: 2
+
+# Profile matches the name in profiles.yml
+profile: 'google_maps_leads'
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  google_maps_leads:
+    staging:
+      materialized: view
+      schema: staging
+    marts:
+      materialized: table
+      schema: marts

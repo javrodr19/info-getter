@@ -1,99 +1,50 @@
-# Info Getter - Google Maps Lead Finder
+# 🗺️ Google Maps Leads Pipeline
 
-A high-performance bot to find restaurants, bars, pubs, and related establishments on Google Maps that **don't have websites**, extracting their contact information (phone numbers, emails) and saving to JSON in real-time.
+A production-style data pipeline that scrapes Google Maps for businesses without websites, cleans and transforms the data, and serves a live analytics dashboard.
 
-## ⚠️ Disclaimer
+## 🚀 The Pipeline
+1.  **Extract**: Node.js + Playwright scraper crawls Google Maps for targeted leads.
+2.  **Load**: Python/Pandas ingests raw JSON into a relational database (PostgreSQL/SQLite).
+3.  **Transform**: dbt Core (or Python fallback) models data using a Medallion Architecture (Raw → Staging → Marts).
+4.  **Visualize**: Streamlit dashboard provides daily trends, email lead counts, and location filters.
 
-This tool is for **educational purposes only**. Web scraping Google Maps may violate their Terms of Service. Use responsibly and at your own risk.
+## 🛠️ Technology Stack
+- **Orchestration**: Apache Airflow (scheduled & retry-ready).
+- **Data Modeling**: dbt Core (Data Build Tool).
+- **Database**: PostgreSQL (Production) / SQLite (Local dev).
+- **Infrastructure**: Docker & Docker Compose.
+- **Frontend**: Streamlit.
 
-## Features
+## 📖 Quick Start
 
-- 🚀 **Fast** - Processes 10 places at a time by default
-- �️ **Food & Drink Focused** - Searches restaurants, bars, pubs, cafes, and 20+ related categories
-- 📍 **Auto-Subdivision** - Automatically splits wide areas into sub-regions for more results
-- 📞 **Contact Info** - Extracts phone numbers and searches for emails via DuckDuckGo
-- 💾 **Real-time Saves** - Results saved to JSON instantly as they're found
-- 🔄 **Deduplication** - Skips already-checked businesses and filters inactive/closed places
-- 🖥️ **CLI** - Easy-to-use command-line interface
+### Option A: Local Run (No Docker)
+1.  **Initialize**:
+    ```bash
+    chmod +x run.sh
+    ./run.sh --setup
+    ```
+2.  **Start Live Pipeline**:
+    ```bash
+    ./run.sh --live
+    ```
+3.  **Showcase (Fake Data)**:
+    ```bash
+    ./run.sh --showcase
+    ```
+    *Access Dashboard at http://localhost:8501*
 
-## Installation
-
+### Option B: Production (Docker)
 ```bash
-# Clone the repository
-git clone <your-repo-url>
-cd info-getter
-
-# Install dependencies
-npm install
-
-# Install Playwright browser
-npx playwright install chromium
+docker-compose up -d
 ```
+*Airflow: http://localhost:8080 | Dashboard: http://localhost:8501*
 
-## Usage
+## 📁 Project Structure
+- `src/`: Core Node.js scraper.
+- `airflow/`: DAGs and loading logic.
+- `dbt/`: Data models and quality tests.
+- `streamlit/`: Dashboard frontend.
+- `sqlite/`: Local database storage.
 
-```bash
-# Basic search (food & drink establishments without websites)
-node src/cli.js -l "Madrid, Spain"
-
-# MASSIVE search with auto-subdivision (~340 searches across categories & areas)
-node src/cli.js -l "Madrid, Spain" -s
-
-# Custom output file
-node src/cli.js -l "Barcelona, Spain" -s -o barcelona_leads.json
-
-# Adjust concurrency (default: 10)
-node src/cli.js -l "London, UK" -s -c 5
-
-# Debug mode (show browser window)
-node src/cli.js -l "Paris, France" --no-headless
-```
-
-### Options
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `-l, --location <area>` | Geographic area to search | **Required** |
-| `-s, --subdivide` | Auto-split into sub-regions for more results | `false` |
-| `-o, --output <file>` | Output JSON filename | `results.json` |
-| `-c, --concurrency <n>` | Parallel page loads | `10` |
-| `-q, --query <type>` | Custom search type (overrides food/drink) | Food & drink |
-| `--no-headless` | Show browser window | `false` |
-
-## What It Searches
-
-When using `-s` (subdivide), the bot searches these categories across multiple sub-regions:
-
-**Categories (21):** restaurants, bars, pubs, cafes, coffee shops, bistros, taverns, diners, eateries, tapas bars, wine bars, cocktail bars, breweries, food trucks, pizzerias, fast food, takeaway, bakeries, ice cream shops, juice bars
-
-**Sub-regions:** North/South/East/West/Central + downtown, old town, city center, business district, suburbs, and more
-
-## Output Format
-
-```json
-{
-  "scrapedAt": "2026-01-11T19:50:00Z",
-  "query": "food & drink",
-  "location": "Madrid, Spain",
-  "totalFound": 150,
-  "results": [
-    {
-      "name": "Bar El Rincón",
-      "address": "Calle Mayor 15, Madrid",
-      "phone": "+34 912 345 678",
-      "emails": ["elrincon@gmail.com"],
-      "hasWebsite": false,
-      "isActive": true,
-      "placeId": "ChIJ..."
-    }
-  ]
-}
-```
-
-## Tips
-
-- Use `-s` for comprehensive searches — finds 10-30x more results
-- Results save instantly — if the bot crashes, you keep what you found
-- Duplicate names are automatically skipped
-- Closed/inactive businesses are filtered out
-- Emails are searched via DuckDuckGo when not found on Maps
+---
+*Disclaimer: This project is for study purposes only. Scraped data usage should comply with Google Maps Terms of Service.*

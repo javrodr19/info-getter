@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: dim_places
+    columns:
+      - name: place_id
+        tests:
+          - unique
+          - not_null
+      - name: business_name
+        tests:
+          - not_null
+
+  - name: fct_daily_scrapes
+    columns:
+      - name: scrape_date
+        tests:
+          - not_null

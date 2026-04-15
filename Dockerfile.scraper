@@ -1,0 +1,19 @@
+FROM mcr.microsoft.com/playwright:v1.41.0-jammy
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY src/ ./src/
+
+# Create data directory for output
+RUN mkdir -p /app/data
+
+# Default command (can be overridden by Airflow)
+ENTRYPOINT ["node", "src/cli.js"]
+CMD ["-q", "restaurants", "-l", "Madrid, Spain", "-o", "data/results.json"]

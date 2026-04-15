@@ -1,0 +1,20 @@
+FROM apache/airflow:2.8.1-python3.11
+
+USER root
+# Install Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Playwright dependencies
+RUN npx playwright install-deps chromium
+
+USER airflow
+WORKDIR /opt/airflow
+COPY package*.json ./scraper/
+RUN cd scraper && npm install
+
+COPY requirements.txt /requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
+RUN npx playwright install chromium

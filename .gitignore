@@ -1,28 +1,35 @@
-# Dependencies
-node_modules/
-
-# Output files
-*.json
-!package.json
-!package-lock.json
-
-# Playwright
-.cache/
-
-# OS files
+# Environments
+venv/
+.env
 .DS_Store
-Thumbs.db
 
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
+# Node
+node_modules/
+npm-debug.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Data & Database
+sqlite/*.db
+data/*.json
+!data/.gitkeep
+!sqlite/.gitkeep
 
 # Logs
 *.log
-npm-debug.log*
+airflow/logs/
+airflow/config/
 
-# Environment
-.env
-.env.local
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
